@@ -137,12 +137,12 @@ kill <PID>
 ### Error 8
 400 Bad Request
 
-為了幫助您進一步診斷 400 Bad Request 錯誤，可以在服務器代碼中添加日誌記錄Logger，這將記錄請求處理期間發生的任何錯誤或異常。
+為了進一步診斷 400 Bad Request 錯誤，可以在服務器代碼中添加日誌記錄Logger，這將記錄請求處理期間發生的任何錯誤或異常。
 
-這個更新的方法將對 postRepository.save(post) 的調用包裝在一個 try-catch 塊中，該塊捕獲發生的任何異常。 
+將postRepository.save(post) 的調用包裝在一個 try-catch 塊中，該block捕獲發生的任何異常。 
 如果捕獲到異常，該方法會使用logger instance記錄異常消息，並向客戶端返回 400 Bad Request 響應以及包含異常消息的錯誤消息。
 
-有了這個更新的錯誤處理，您應該能夠在服務器日誌中看到有關 400 Bad Request 錯誤原因的更多信息。 這可以幫助確定錯誤的根本原因並採取適當的步驟來修復它。
+有了這個錯誤處理，能夠在服務器日誌中看到有關 400 Bad Request 錯誤原因的更多信息。 這可以幫助確定錯誤的根本原因並採取適當的步驟來修復它。
 ```
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,20 +167,22 @@ import org.slf4j.LoggerFactory;
 ```
 
 ### Error 9
+錯誤：
 ```
 Table 'forum.posts_seq' doesn't exist
 	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:120) ~[mysql-connector-j-8.0.32.jar:8.0.32]
 	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.0.32.jar:8.0.32]
 	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:916) ~[mysql-connector-j-8.0.32.jar:8.0.32]
 	at com.mysql.cj.jdbc.ClientPreparedStatement.execut
-```	
+```
+解法：
+1. 利用 @GeneratedValue 自動生成id，strategy 屬性指主鍵生成方式。 IDENTITY 指數據庫將自動生成主鍵id的值。
+
 ```
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 ```
-更改數據庫中主鍵的設定為 主鍵自增
-AUTO_INCREMENT PRIMARY KEY
+2. 更改數據庫中主鍵的設定為 主鍵自增：AUTO_INCREMENT PRIMARY KEY
 
-利用 @GeneratedValue 自動生成id，strategy 屬性指主鍵生成方式。 IDENTITY 指數據庫將自動生成主鍵id的值。
 ```
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
