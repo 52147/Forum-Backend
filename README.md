@@ -193,10 +193,11 @@ https://stackoverflow.com/questions/32968527/hibernate-sequence-doesnt-exist
 ```
 com.fasterxml.jackson.databind.exc.InvalidDefinitionException: No serializer found for class org.hibernate.proxy.pojo.bytebuddy.ByteBuddyInterceptor and no properties discovered to create BeanSerializer (to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS) (through reference chain: java.util.ArrayList[0]->com.forum.backend.entity.Post["user"]->com.forum.backend.entity.User$HibernateProxy$BfYO5Tgz["hibernateLazyInitializer"])
 ```
-當Jackson嘗試序列化一個對象，但找不到 序列化器的屬性時，就會發生錯誤。
-有錯誤的屬性是user，他是一個Hibernate proxy object。
+出現此錯誤是因為 Spring Boot 使用的 Jackson 序列化程序無法序列化為延遲加載創建的 Hibernate 代理對象。  	
+要解決此問題，可以使用 @JsonIgnoreProperties 註釋，將 Jackson 序列化程序配置為忽略這些屬性。  	
 
-此種錯誤的解決方法是將 @JsonIgnoreProperties 添加到Post class中的user 屬性，這個註釋告訴Jackson忽略Hibernate proxy object的hibernateLazyInitializer 屬性，因為他會導致序列化錯誤。
+
+使用 @JsonIgnoreProperties 註釋加在user屬性，會告訴 Jackson 在序列化 Post 實體時忽略 User 實體的 hibernateLazyInitializer 屬性。
 ```
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
