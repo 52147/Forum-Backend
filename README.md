@@ -189,3 +189,17 @@ Table 'forum.posts_seq' doesn't exist
 private Long id;
 ```
 https://stackoverflow.com/questions/32968527/hibernate-sequence-doesnt-exist
+### Error 10
+```
+com.fasterxml.jackson.databind.exc.InvalidDefinitionException: No serializer found for class org.hibernate.proxy.pojo.bytebuddy.ByteBuddyInterceptor and no properties discovered to create BeanSerializer (to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS) (through reference chain: java.util.ArrayList[0]->com.forum.backend.entity.Post["user"]->com.forum.backend.entity.User$HibernateProxy$BfYO5Tgz["hibernateLazyInitializer"])
+```
+當Jackson嘗試序列化一個對象，但找不到 序列化器的屬性時，就會發生錯誤。
+有錯誤的屬性是user，他是一個Hibernate proxy object。
+
+此種錯誤的解決方法是將 @JsonIgnoreProperties 添加到Post class中的user 屬性，這個註釋告訴Jackson忽略Hibernate proxy object的hibernateLazyInitializer 屬性，因為他會導致序列化錯誤。
+```
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer"})
+    private User user;
+```
