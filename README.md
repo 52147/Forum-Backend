@@ -82,3 +82,108 @@ Process finished with exit code 1
 spring.datasource.url=jdbc:mysql://localhost:3306/forum?allowMultiQueries=true
 
 ```
+### Error 6
+錯誤：
+```
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'postController': Unsatisfied dependency expressed through field 'postRepository': Error creating bean with name 'postRepository' defined in com.forum.backend.respository.PostRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.forum.backend.respository.PostRepository.findAllByOrderByCreateTimeDesc(); Reason: Failed to create query for method public abstract java.util.List com.forum.backend.respository.PostRepository.findAllByOrderByCreateTimeDesc(); No property 'createTime' found for type 'Post'
+```
+原因：
+應用程序無法為 PostController 創建 bean，因為通過“postRepository”表示的field 未滿足依賴關係。  	
+
+該錯誤是由 com.forum.backend.repository 包中定義的 PostRepository 類所引起的。  	
+
+
+更具體地說，錯誤消息表明沒有找到類型“Post”的屬性“createTime”，並且無法為方法“findAllByOrderByCreateTimeDesc()”創建查詢。 
+這表明應用程序中定義的 Post 實體沒有名為“createTime”的屬性，或該屬性未使用 @Column 或 @Temporal 註釋。  	
+
+
+結果我發現數據庫中col名稱為 created_at 而非 create_time，將name 改為"created_at"就好。  	
+
+解法：  	
+
+在 PostRepository 中，修改 @Column 屬性 為 name = "created_at"
+```
+    @Column(name = "created_at")
+    private LocalDateTime createTime;
+```    
+
+### Error 7
+```
+2023-04-02T14:56:03.424-04:00 ERROR 19039 --- [           main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+
+Process finished with exit code 1
+```
+
+原因：port8080被佔用
+解法：
+```
+lsof -i :8080
+kill <PID>
+```
+
+### Error 8
+400 Bad Request
+
+為了幫助您進一步診斷 400 Bad Request 錯誤，可以在服務器代碼中添加日誌記錄Logger，這將記錄請求處理期間發生的任何錯誤或異常。
+
+這個更新的方法將對 postRepository.save(post) 的調用包裝在一個 try-catch 塊中，該塊捕獲發生的任何異常。 
+如果捕獲到異常，該方法會使用logger instance記錄異常消息，並向客戶端返回 400 Bad Request 響應以及包含異常消息的錯誤消息。
+
+有了這個更新的錯誤處理，您應該能夠在服務器日誌中看到有關 400 Bad Request 錯誤原因的更多信息。 這可以幫助確定錯誤的根本原因並採取適當的步驟來修復它。
+```
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+```
+```
+    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
+
+```
+```
+    @PostMapping("/")
+    public ResponseEntity<String> createPost(@RequestBody Post post) {
+        try {
+            postRepository.save(post);
+            return new ResponseEntity<>("Post created successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            // Log the exception message
+            logger.error("Error creating post: {}", e.getMessage());
+            // Return an error response
+            return new ResponseEntity<>("Error creating post: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+```
+
+### Error 9
+```
+Table 'forum.posts_seq' doesn't exist
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:120) ~[mysql-connector-j-8.0.32.jar:8.0.32]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.0.32.jar:8.0.32]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:916) ~[mysql-connector-j-8.0.32.jar:8.0.32]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.execut
+```	
+```
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+```
+更改數據庫中主鍵的設定為 主鍵自增
+AUTO_INCREMENT PRIMARY KEY
+
+利用 @GeneratedValue 自動生成id，strategy 屬性指主鍵生成方式。 IDENTITY 指數據庫將自動生成主鍵id的值。
+```
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+```
+https://stackoverflow.com/questions/32968527/hibernate-sequence-doesnt-exist
