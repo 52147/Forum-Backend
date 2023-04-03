@@ -17,4 +17,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByTitleContaining(String keyword);
 
     Post save(Post post);
+
+    List<Post> findByUserId(Long id);
 }
