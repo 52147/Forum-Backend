@@ -85,7 +85,7 @@ spring.datasource.url=jdbc:mysql://localhost:3306/forum?allowMultiQueries=true
 ### Error 6
 錯誤：
 ```
-org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'postController': Unsatisfied dependency expressed through field 'postRepository': Error creating bean with name 'postRepository' defined in com.forum.backend.respository.PostRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.forum.backend.respository.PostRepository.findAllByOrderByCreateTimeDesc(); Reason: Failed to create query for method public abstract java.util.List com.forum.backend.respository.PostRepository.findAllByOrderByCreateTimeDesc(); No property 'createTime' found for type 'Post'
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'postController': Unsatisfied dependency expressed through field 'postRepository': Error creating bean with name 'postRepository' defined in com.forum.backend.repository.PostRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.forum.backend.repository.PostRepository.findAllByOrderByCreateTimeDesc(); Reason: Failed to create query for method public abstract java.util.List com.forum.backend.repository.PostRepository.findAllByOrderByCreateTimeDesc(); No property 'createTime' found for type 'Post'
 ```
 原因：
 應用程序無法為 PostController 創建 bean，因為通過“postRepository”表示的field 未滿足依賴關係。  	

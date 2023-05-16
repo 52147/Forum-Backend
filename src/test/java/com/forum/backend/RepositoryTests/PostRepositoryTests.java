@@ -2,7 +2,7 @@ package com.forum.backend.RepositoryTests;
 
 import com.forum.backend.entity.Post;
 import com.forum.backend.entity.User;
-import com.forum.backend.respository.PostRepository;
+import com.forum.backend.repository.PostRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

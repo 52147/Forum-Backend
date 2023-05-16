@@ -1,7 +1,7 @@
 package com.forum.backend.controller;
 
 import com.forum.backend.entity.User;
-import com.forum.backend.respository.UserRepository;
+import com.forum.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.forum.backend.respository;
+package com.forum.backend.repository;
 
 import com.forum.backend.entity.Post;
 import com.forum.backend.entity.User;

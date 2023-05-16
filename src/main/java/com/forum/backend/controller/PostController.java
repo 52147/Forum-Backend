@@ -1,7 +1,8 @@
 package com.forum.backend.controller;
 
+import com.forum.backend.dto.PostDTO;
 import com.forum.backend.entity.Post;
-import com.forum.backend.respository.PostRepository;
+import com.forum.backend.repository.PostRepository;
 import com.forum.backend.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,13 +13,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+
 
 
 @RestController
 @RequestMapping("/api/posts")
-@Api(value = "PostController", description = "REST APIs related to Post Entity")
 public class PostController {
     private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
@@ -48,8 +47,7 @@ public class PostController {
     private PostService postService;
 
     @GetMapping("/posts")
-    @ApiOperation(value = "View a list of all posts", response = List.class)
-    public List<Post> getAllPosts() {
+    public List<PostDTO> getAllPosts() {
         return postService.getAllPosts();
     }
 
@@ -60,19 +58,16 @@ public class PostController {
 //    }
 
     @GetMapping("/posts/{id}")
-    @ApiOperation(value = "Get a post by its ID", response = Post.class)
-    public Post getPostById(@PathVariable Long id) {
+    public PostDTO getPostById(@PathVariable Long id) {
         return postService.getPostById(id);
     }
 
     @PutMapping("/posts/{id}")
-    @ApiOperation(value = "Update a post", response = Post.class)
     public Post updatePost(@PathVariable Long id, @RequestBody Post post) {
         return postService.updatePost(id, post);
     }
 
     @DeleteMapping("/posts/{id}")
-    @ApiOperation(value = "Delete a post by its ID", response = Void.class)
     public void deletePost(@PathVariable Long id) {
         postService.deletePost(id);
     }
