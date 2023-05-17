@@ -12,21 +12,12 @@ import java.util.List;
 @Service
 public class PostServiceImpl implements PostService {
 
-    private final PostMapper postMapper;
-
     @Autowired
-    public PostServiceImpl(PostMapper postMapper) {
-        this.postMapper = postMapper;
-    }
+    private PostMapper postMapper;
 
     @Override
     public List<PostDTO> getAllPosts() {
         return postMapper.getAllPosts();
-    }
-
-    @Override
-    public Post createPost(Post post) {
-        return null;
     }
 
     @Override
@@ -45,17 +36,46 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post updatePost(Long id, Post post) {
-        return null;
-    }
-
-    @Override
-    public PostDTO updatePost(Long id, PostDTO postDTO) {
-        return null;
-    }
-
-    @Override
     public void updatePost(PostDTO postDTO) {
         postMapper.updatePost(postDTO);
+    }
+
+    @Override
+    public Post createPost(Post post) {
+        PostDTO postDTO = mapToPostDTO(post);
+        postMapper.createPost(postDTO);
+        return mapToPost(postDTO);
+    }
+
+    @Override
+    public Post updatePost(Long id, Post post) {
+        PostDTO postDTO = mapToPostDTO(post);
+        postDTO.setId(id);
+        postMapper.updatePost(postDTO);
+        return mapToPost(postDTO);
+    }
+
+    @Override
+    public void updatePost(Long id, PostDTO postDTO) {
+        postDTO.setId(id);
+        postMapper.updatePost(postDTO);
+    }
+
+    private PostDTO mapToPostDTO(Post post) {
+        PostDTO postDTO = new PostDTO();
+        postDTO.setId(post.getId());
+        postDTO.setTitle(post.getTitle());
+        postDTO.setContent(post.getContent());
+        // Map other properties as needed
+        return postDTO;
+    }
+
+    private Post mapToPost(PostDTO postDTO) {
+        Post post = new Post();
+        post.setId(postDTO.getId());
+        post.setTitle(postDTO.getTitle());
+        post.setContent(postDTO.getContent());
+        // Map other properties as needed
+        return post;
     }
 }

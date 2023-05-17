@@ -1,7 +1,7 @@
 package com.forum.backend.entity;
-// jakarta.persistence.Id 和 org.springframework.data.annotation.Id 這兩種 ID 標註，這可能會引起衝突並導致編譯錯誤。建議只保留其中一個標註，
-// 通常建議使用 Jakarta Persistence API 的 @Id 標註。
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.forum.backend.entity.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -27,7 +27,6 @@ public class Post {
     private LocalDateTime createTime;
 
     // getters and setters
-
     public Long getId() {
         return id;
     }
@@ -60,12 +59,10 @@ public class Post {
         this.user = user;
     }
 
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
+    // Other code...
 
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
+    @PrePersist
+    protected void onCreate() {
+        createTime = LocalDateTime.now();
     }
 }
-
